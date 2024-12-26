@@ -1,17 +1,20 @@
-import React, { useState, useContext } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { useAddCommentMutation, useFetchBooksByIdQuery } from '../../redux/features/books/booksApi';
-import { getImgUrl } from '../../utils/getImgUrl';
-import { HiOutlineShoppingBag } from 'react-icons/hi';
-import { useDispatch } from 'react-redux';
-import { addToCart } from '../../redux/features/cart/cartSlice';
-import { AuthContext } from '../../context/AuthContext';
+import React, { useState, useContext } from "react";
+import { Link, useParams } from "react-router-dom";
+import {
+  useAddCommentMutation,
+  useFetchBooksByIdQuery,
+} from "../../redux/features/books/booksApi";
+import { getImgUrl } from "../../utils/getImgUrl";
+import { HiOutlineShoppingBag } from "react-icons/hi";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../redux/features/cart/cartSlice";
+import { AuthContext } from "../../context/AuthContext";
 
 // Function to render stars based on rating (half stars supported)
 const StarRating = ({ rating }) => {
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 !== 0;
-// cover
+  // cover
   return (
     <div className="flex items-center">
       {[...Array(5)].map((_, index) => (
@@ -19,10 +22,10 @@ const StarRating = ({ rating }) => {
           key={index}
           className={`w-5 h-5 ${
             index < fullStars
-              ? 'text-yellow-500'
+              ? "text-yellow-500"
               : index === fullStars && hasHalfStar
-              ? 'text-yellow-300'
-              : 'text-gray-300'
+              ? "text-yellow-300"
+              : "text-gray-300"
           }`}
           xmlns="http://www.w3.org/2000/svg"
           fill="currentColor"
@@ -41,7 +44,7 @@ const SingleBook = () => {
   const dispatch = useDispatch();
   const { user } = useContext(AuthContext);
 
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
   const [addComment, { isLoading: isCommentLoading }] = useAddCommentMutation();
 
   const handleAddToCart = (product) => {
@@ -50,18 +53,26 @@ const SingleBook = () => {
 
   const handleCommentSubmit = async () => {
     if (!user?.email || !comment.trim()) {
-      alert('Please provide a valid email and comment.');
+      alert("Please provide a valid email and comment.");
       return;
     }
 
     try {
-      const response = await addComment({ id: book._id, email: user.email, comment }).unwrap();
-      console.log('Comment response:', response);
-      alert('Thank you for your comment!');
-      setComment(''); // Clear the comment input
+      const response = await addComment({
+        id: book._id,
+        email: user.email,
+        comment,
+      }).unwrap();
+      console.log("Comment response:", response);
+      alert("Thank you for your comment!");
+      setComment(""); // Clear the comment input
     } catch (err) {
-      console.error('Error submitting comment:', err);
-      alert(`Failed to submit comment: ${err.data?.message || err.message || 'Unknown error'}`);
+      console.error("Error submitting comment:", err);
+      alert(
+        `Failed to submit comment: ${
+          err.data?.message || err.message || "Unknown error"
+        }`
+      );
     }
   };
 
@@ -75,40 +86,58 @@ const SingleBook = () => {
         <div className="sm:w-1/2 flex-shrink-0 overflow-hidden rounded-lg">
           <img
             src={getImgUrl(book.coverImage)}
-            alt={book?.title || 'Book Cover'}
+            alt={book?.title || "Book Cover"}
             className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
           />
         </div>
 
         {/* Book Details & Actions */}
         <div className="flex flex-col sm:w-1/2 space-y-4">
-          <h1 className="text-4xl font-bold mb-4 text-gray-800">{book?.title}</h1>
-          <p className="text-gray-600 text-lg mb-6 leading-relaxed">{book?.description}</p>
+          <h1 className="text-4xl font-bold mb-4 text-gray-800">
+            {book?.title}
+          </h1>
+          <p className="text-gray-600 text-lg mb-6 leading-relaxed">
+            {book?.description}
+          </p>
 
           <div className="flex items-center justify-between mb-4">
-            <div className="text-lg font-semibold text-green-600">Br {book?.newPrice}</div>
-            <div className="text-gray-500 line-through ml-2">Br {book?.oldPrice}</div>
+            <div className="text-lg font-semibold text-green-600">
+              Br {book?.newPrice}
+            </div>
+            <div className="text-gray-500 line-through ml-2">
+              Br {book?.oldPrice}
+            </div>
           </div>
 
           <div>
-            <span className="text-sm text-gray-500">Available Quantity: {book?.quantity}</span>
+            <span className="text-sm text-gray-500">
+              Available Quantity: {book?.quantity}
+            </span>
           </div>
 
           {/* Add to Cart Button */}
-          <button
-            onClick={() => handleAddToCart(book)}
-            className="w-full bg-blue-600 text-white py-2 rounded-md flex justify-center items-center gap-2 font-medium transition duration-300 hover:bg-blue-700"
-          >
-            <HiOutlineShoppingBag />
-            <span>Add to Cart</span>
-          </button>
+          {book?.quantity === 0 ? (
+            <h3 className="text-2xl text-center text-red-500">
+              The book is out of Stock
+            </h3>
+          ) : (
+            <button
+              onClick={() => handleAddToCart(book)}
+              className="w-full bg-blue-600 text-white py-2 rounded-md flex justify-center items-center gap-2 font-medium transition duration-300 hover:bg-blue-700"
+            >
+              <HiOutlineShoppingBag />
+              <span>Add to Cart</span>
+            </button>
+          )}
 
           {/* Rating Section */}
           <div className="mt-4">
             <span className="text-lg font-semibold">Average Rating: </span>
             <StarRating rating={book?.averageRating || 0} />
             <span className="ml-2 text-sm text-gray-500">
-              {book.averageRating ? book.averageRating.toFixed(1) : 'No ratings yet'}
+              {book.averageRating
+                ? book.averageRating.toFixed(1)
+                : "No ratings yet"}
             </span>
           </div>
         </div>
@@ -119,20 +148,23 @@ const SingleBook = () => {
         <h2 className="text-xl font-bold mb-3 text-gray-800">Book Details</h2>
         <ul className="list-disc list-inside text-gray-700 space-y-2">
           <li>
-            <strong>Author:</strong> {book.author || 'Unknown'}
+            <strong>Author:</strong> {book.author || "Unknown"}
           </li>
           <li>
-            <strong>Genre:</strong> {book?.category || 'Unknown'}
+            <strong>Genre:</strong> {book?.category || "Unknown"}
           </li>
           <li>
-            <strong>Published Date:</strong> {new Date(book?.createdAt).toLocaleDateString()}
+            <strong>Published Date:</strong>{" "}
+            {new Date(book?.createdAt).toLocaleDateString()}
           </li>
         </ul>
       </div>
 
       {/* Comment Section */}
       <div className="mt-6">
-        <h2 className="text-xl font-bold mb-3 text-gray-800">Leave a Comment</h2>
+        <h2 className="text-xl font-bold mb-3 text-gray-800">
+          Leave a Comment
+        </h2>
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
@@ -145,7 +177,7 @@ const SingleBook = () => {
           className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
           disabled={isCommentLoading}
         >
-          {isCommentLoading ? 'Submitting...' : 'Submit Comment'}
+          {isCommentLoading ? "Submitting..." : "Submit Comment"}
         </button>
 
         {/* Display Comments */}
