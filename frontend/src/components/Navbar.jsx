@@ -12,10 +12,8 @@ const Navbar = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
 
   const navigation = [
-    {name: "Dashboard", href:"/Admin"},
     {name: "Orders", href:"/api/orders/orderPage"},
     {name: "Cart Page", href:"/CartPage"},
-    {name: "Checkout", href:"/CheckOutPage"},
     {name: "Profile", href:"/Profile"}
 ]
 
