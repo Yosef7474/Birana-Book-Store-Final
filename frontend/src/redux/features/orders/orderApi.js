@@ -46,6 +46,28 @@ export const orderApi = createApi({
       }),
       invalidatesTags: ["Orders"],
     }),
+
+     // Order-related endpoints
+     fetchAllOrders: builder.query({
+      query: () => '/orders/all-orders',
+      providesTags: ['Orders'],
+    }),
+    fetchUserOrders: builder.query({
+      query: (email) => `/orders/user-orders?email=${email}`,
+      providesTags: (results, error, email) => [{ type: 'Orders', id: email }],
+    }),
+
+
+    // Payment Callback Endpoint - to update payment status after callback
+    paymentCallback: builder.mutation({
+      query: (paymentData) => ({
+        url: "/payment/callback",  // The endpoint where Chapa sends the payment status
+        method: "POST",
+        body: paymentData,  // This should include payment details like tx_ref, status, etc.
+      }),
+      // You might want to invalidate the Orders cache or update them accordingly
+      invalidatesTags: ["Orders"],
+    }),
   }),
 });
 
@@ -54,4 +76,7 @@ export const {
   useGetUserOrdersQuery,
   useGetAllOrdersQuery,
   useUpdateOrderStatusMutation,
+  useFetchAllOrdersQuery,
+  useFetchUserOrdersQuery,
+  usePaymentCallbackMutation
 } = orderApi;

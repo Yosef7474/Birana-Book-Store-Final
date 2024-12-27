@@ -6,6 +6,7 @@ import Loading from "../../components/Loading";
 import { HiViewGridAdd } from 'react-icons/hi';
 import { MdIncompleteCircle, MdOutlineManageHistory } from 'react-icons/md';
 import RevenueChart from "./RevenueChart";
+import GetAllOrders from "../order/GetAllorders";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);

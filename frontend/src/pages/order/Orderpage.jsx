@@ -1,12 +1,15 @@
 import React, { useContext, useState } from "react";
 import { useSelector } from "react-redux";
-import { useCreateOrderMutation } from "../../redux/features/orders/orderApi";
+import { orderApi, useCreateOrderMutation } from "../../redux/features/orders/orderApi";
 import { AuthContext } from "../../context/AuthContext";
 
-const Orderpage = () => {
+
+
+const Orderpage = (order) => {
   const { user } = useContext(AuthContext);
   const cartItems = useSelector((state) => state.cart.cartItems);
   const [createOrder, { isLoading, isSuccess, error }] = useCreateOrderMutation();
+  const txRef = `tx-${order._id}-${Date.now()}`;
 
   // State for tracking user-specified quantities
   const [quantities, setQuantities] = useState(
@@ -36,17 +39,47 @@ const Orderpage = () => {
         title: item.title,
         price: item.newPrice,
         quantity: quantities[item._id],
-        paymentStatus: 'Pending'
+        paymentStatus: "Pending",
       })),
       totalAmount: totalPrice,
     };
 
     try {
       console.log("Order Data:", orderData);
-      await createOrder(orderData).unwrap();
+      const createdOrder = await createOrder(orderData).unwrap();
+
+      // Trigger payment process
+      redirectToChapaPayment(createdOrder._id);
     } catch (err) {
       console.error("Failed to place order:", err);
     }
+  };
+
+
+  const redirectToChapaPayment = (orderId) => {
+    const chapaForm = document.createElement("form");
+    chapaForm.method = "POST";
+    chapaForm.action = "https://api.chapa.co/v1/hosted/pay";
+
+    // Add required Chapa fields
+    chapaForm.innerHTML = `
+      <input type="hidden" name="public_key" value="CHAPUBK_TEST-uWcbG1Dm76d5tzQewwLEKViwHbLQTd6X" />
+      <input type="hidden" name="tx_ref" value="${txRef}" />
+      <input type="hidden" name="amount" value="${totalPrice.toFixed(2)}" />
+      <input type="hidden" name="currency" value="ETB" />
+      <input type="hidden" name="email" value="${user.email}" />
+      <input type="hidden" name="first_name" value="${user.name.split(" ")[0]}" />
+      <input type="hidden" name="last_name" value="${user.name.split(" ")[1] || ""}" />
+      <input type="hidden" name="title" value="Bookstore Purchase" />
+      <input type="hidden" name="description" value="Books purchased from our store" />
+      <input type="hidden" name="callback_url" value="http://api/orders/payment/callback" />
+      <input type="hidden" name="return_url" value="http://localhost:5173/success" />
+      <input type="hidden" name="meta[orderId]" value="${orderId}" />
+      
+    `;
+
+    document.body.appendChild(chapaForm);
+    chapaForm.submit();
   };
 
   const EmptyCartPlaceholder = (
@@ -98,7 +131,7 @@ const Orderpage = () => {
               disabled={isLoading}
               className="bg-purple-600 text-white font-medium py-2 px-6 rounded-lg shadow hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              {isLoading ? "Placing Order..." : "Place Order"}
+              {isLoading ? "Placing Order..." : "Place Order & Pay"}
             </button>
           </div>
 

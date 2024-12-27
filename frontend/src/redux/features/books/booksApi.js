@@ -75,8 +75,7 @@ const booksApi = createApi({
                 body: {email, comment},
             }),
             invalidatesTags: (result, error, { id }) => [{ type: "Books", id: id }],
-        })
-          
+        }),
        
     })
 })

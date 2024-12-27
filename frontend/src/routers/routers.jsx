@@ -17,6 +17,8 @@ import AddBook from "../pages/dashboard/addBook/AddBook";
 import Profile from "../components/Profile";
 import Orderpage from "../pages/order/Orderpage";
 import UpdateBook from "../pages/dashboard/editBook/UpdateBook";
+import Orders from "../pages/dashboard/orders/Orders";
+import PaymentSuccess from "../pages/order/PaymentSuccess";
 
 const router = createBrowserRouter([
     {
@@ -54,6 +56,14 @@ const router = createBrowserRouter([
         {
           path: "/profile",
           element: <PrivateRoute><Profile/></PrivateRoute>
+        },
+        {
+          path: "/orders",
+          element: <PrivateRoute><Orders/></PrivateRoute>
+        },
+        {
+          path: "/success",
+          element: <PrivateRoute><PaymentSuccess/></PrivateRoute>
         }
         
       ]
@@ -81,7 +91,8 @@ const router = createBrowserRouter([
         {
           path: "manage-books",
           element: <AdminRoute><ManageBooks/></AdminRoute>
-        }
+        },
+
 
       ]
 
