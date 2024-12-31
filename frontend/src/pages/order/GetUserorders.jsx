@@ -91,7 +91,7 @@ const UserOrders = () => {
                 ))}
               </ul>
               <p className="mt-4 text-lg font-semibold text-gray-800">Total: ${order.totalAmount}</p>
-              <p className={`mt-2 text-sm font-medium ${order.paymentStatus === "Completed" ? "text-green-600" : "text-yellow-600"}`}>
+              <p className={`mt-2 text-sm font-medium text-green-600 ${order.paymentStatus}`}>
                 <strong>Status:</strong> {order.paymentStatus}
               </p>
             </div>

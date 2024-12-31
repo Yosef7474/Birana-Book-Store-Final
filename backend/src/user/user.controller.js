@@ -111,6 +111,38 @@ const getUserDetails = async (req, res) => {
   }
 };
 
+
+const updateProfile = async (req, res) => {
+  try {
+    const { userId, name, email, password, preference } = req.body;
+
+    // Check if password is provided, if so, hash it
+    let hashedPassword = password;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+
+    // Find user and update
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { name, email, password: hashedPassword, preference },
+      { new: true } // Return the updated user
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({
+      message: "Profile updated successfully",
+      user: updatedUser
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 // recommended books
 const getRecommendedBooks = async (req, res) => {
   try {
@@ -168,5 +200,6 @@ module.exports = {
   getUserDetails,
   updatePreferences,
   getRecommendedBooks,
-  getUsersByEmail
+  getUsersByEmail,
+  updateProfile
 };

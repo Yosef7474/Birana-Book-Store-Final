@@ -32,8 +32,31 @@ export const AuthProvider = ({ children }) => { // Named export
     setUser(null);
   };
 
+  const updateProfile = async (newProfileData) => {
+    // Hash the password if provided
+    let hashedPassword = newProfileData.password;
+    if (hashedPassword) {
+      hashedPassword = await bcrypt.hash(hashedPassword, 10); // Hash the password with a salt
+    }
+
+    setUser((prevUser) => {
+      const updatedUser = { 
+        ...prevUser, 
+        ...newProfileData, 
+        password: hashedPassword || prevUser.password // Update the password with the hashed value if it exists
+      };
+
+      // Optionally, update the token in localStorage with the new profile data
+      const updatedPayloadBase64 = btoa(JSON.stringify(updatedUser));
+      const updatedToken = `${updatedPayloadBase64}.${localStorage.getItem("token").split(".")[2]}`;
+      localStorage.setItem("token", updatedToken);
+
+      return updatedUser;
+    });
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );
