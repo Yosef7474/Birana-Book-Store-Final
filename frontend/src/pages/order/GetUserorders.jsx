@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useGetUserOrdersQuery } from "../../redux/features/orders/orderApi";
-import { format, isToday, isYesterday, isThisWeek, isThisMonth } from "date-fns"; 
+import { format, isToday, isYesterday, isThisWeek, isThisMonth } from "date-fns";
 import { AuthContext } from "../../context/AuthContext";
 
 const UserOrders = () => {
@@ -9,10 +9,10 @@ const UserOrders = () => {
   
   const { data: orders, isLoading, isError } = useGetUserOrdersQuery(userEmail);
 
-  const [timeframe, setTimeframe] = useState("today"); // State to handle selected timeframe
+  const [timeframe, setTimeframe] = useState("today");
 
-  if (isLoading) return <p>Loading your orders...</p>;
-  if (isError) return <p>Failed to fetch your orders.</p>;
+  if (isLoading) return <p className="text-center text-xl text-gray-600">Loading your orders...</p>;
+  if (isError) return <p className="text-center text-xl text-red-600">Failed to fetch your orders.</p>;
 
   // Function to filter orders based on timeframe
   const filterOrders = (orders, timeframe) => {
@@ -26,70 +26,78 @@ const UserOrders = () => {
       case "month":
         return orders.filter(order => isThisMonth(new Date(order.createdAt)));
       default:
-        return orders; // Return all orders if "all" timeframe is selected
+        return orders;
     }
   };
 
   const filteredOrders = filterOrders(orders, timeframe);
 
+  // Sort orders in descending order based on creation date (latest first)
+  const sortedOrders = filteredOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-2xl font-bold mb-4">Your Orders</h1>
+    <div className="bg-gradient-to-r from-purple-200 via-pink-200 to-yellow-200 text-gray-800 min-h-screen p-6">
+      <h1 className="text-4xl font-bold text-center mb-10">Your Orders</h1>
       
       {/* Timeframe Filter */}
-      <div className="mb-4">
+      <div className="flex justify-center mb-6 space-x-6">
         <button
-          className={`px-4 py-2 mr-2 rounded ${timeframe === "today" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+          className={`px-6 py-3 rounded-full text-lg font-medium transition duration-300 ${timeframe === "today" ? "bg-indigo-600 text-white shadow-lg transform scale-105" : "bg-white text-gray-800 hover:bg-indigo-50"}`}
           onClick={() => setTimeframe("today")}
         >
           Today
         </button>
         <button
-          className={`px-4 py-2 mr-2 rounded ${timeframe === "yesterday" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+          className={`px-6 py-3 rounded-full text-lg font-medium transition duration-300 ${timeframe === "yesterday" ? "bg-indigo-600 text-white shadow-lg transform scale-105" : "bg-white text-gray-800 hover:bg-indigo-50"}`}
           onClick={() => setTimeframe("yesterday")}
         >
           Yesterday
         </button>
         <button
-          className={`px-4 py-2 mr-2 rounded ${timeframe === "week" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+          className={`px-6 py-3 rounded-full text-lg font-medium transition duration-300 ${timeframe === "week" ? "bg-indigo-600 text-white shadow-lg transform scale-105" : "bg-white text-gray-800 hover:bg-indigo-50"}`}
           onClick={() => setTimeframe("week")}
         >
           This Week
         </button>
         <button
-          className={`px-4 py-2 mr-2 rounded ${timeframe === "month" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+          className={`px-6 py-3 rounded-full text-lg font-medium transition duration-300 ${timeframe === "month" ? "bg-indigo-600 text-white shadow-lg transform scale-105" : "bg-white text-gray-800 hover:bg-indigo-50"}`}
           onClick={() => setTimeframe("month")}
         >
           This Month
         </button>
         <button
-          className={`px-4 py-2 rounded ${timeframe === "all" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+          className={`px-6 py-3 rounded-full text-lg font-medium transition duration-300 ${timeframe === "all" ? "bg-indigo-600 text-white shadow-lg transform scale-105" : "bg-white text-gray-800 hover:bg-indigo-50"}`}
           onClick={() => setTimeframe("all")}
         >
           All Orders
         </button>
       </div>
 
-      <div className="bg-white shadow-md rounded-lg p-4">
-        {filteredOrders && filteredOrders.length > 0 ? (
-          filteredOrders.map((order) => (
-            <div key={order._id} className="p-4 border-b">
-              <p><strong>Order ID:</strong> {order._id}</p>
-              <p><strong>Date:</strong> {format(new Date(order.createdAt), "MMMM d, yyyy h:mm a")}</p>
-              <p><strong>Books:</strong></p>
-              <ul>
+      <div className="space-y-8">
+        {sortedOrders && sortedOrders.length > 0 ? (
+          sortedOrders.map((order) => (
+            <div key={order._id} className="bg-white rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition duration-300 p-6">
+              <div className="flex justify-between items-center mb-4">
+                <p className="text-xl font-semibold text-indigo-600">Order ID: {order._id}</p>
+                <p className="text-sm text-gray-500">{format(new Date(order.createdAt), "MMMM d, yyyy h:mm a")}</p>
+              </div>
+              <p className="text-lg font-medium text-gray-700">Books:</p>
+              <ul className="space-y-2 pl-6 text-gray-600">
                 {order.books.map((book, idx) => (
-                  <li key={idx}>
-                    {book.title} - Qty: {book.quantity}
+                  <li key={idx} className="flex justify-between">
+                    <span>{book.title}</span>
+                    <span className="text-gray-700">Qty: {book.quantity}</span>
                   </li>
                 ))}
               </ul>
-              <p><strong>Total:</strong> ${order.totalAmount}</p>
-              <p><strong>Status:</strong> {order.paymentStatus}</p>
+              <p className="mt-4 text-lg font-semibold text-gray-800">Total: ${order.totalAmount}</p>
+              <p className={`mt-2 text-sm font-medium ${order.paymentStatus === "Completed" ? "text-green-600" : "text-yellow-600"}`}>
+                <strong>Status:</strong> {order.paymentStatus}
+              </p>
             </div>
           ))
         ) : (
-          <p>No orders found for this timeframe.</p>
+          <p className="text-center text-xl text-gray-500">No orders found for this timeframe.</p>
         )}
       </div>
     </div>

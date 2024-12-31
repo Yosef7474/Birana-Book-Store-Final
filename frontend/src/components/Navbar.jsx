@@ -12,9 +12,11 @@ const Navbar = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
 
   const navigation = [
-    {name: "Orders", href:"/api/orders/orderPage"},
+    {name: "Profile", href:"/Profile"},
+    {name: "CheckoutPage", href:"/api/orders/orderPage"},
+    {name: "orders", href:"/viewOrders"},
     {name: "Cart Page", href:"/CartPage"},
-    {name: "Profile", href:"/Profile"}
+    
 ]
 
 const [isDropdownOpen, setIsDropdownOpen ] = useState(false)

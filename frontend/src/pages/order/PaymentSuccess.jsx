@@ -29,7 +29,7 @@ const PaymentSuccess = () => {
         <div className="space-x-4">
           {/* Button to View Orders */}
           <a
-            href="/orders"
+            href="/viewOrders"
             className="inline-block bg-blue-600 text-white px-6 py-2 rounded-md text-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             View Orders
