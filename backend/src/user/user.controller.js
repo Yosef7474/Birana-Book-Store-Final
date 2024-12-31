@@ -87,6 +87,19 @@ const loginUser = async (req, res) => {
   }
 };
 
+const getUsersByEmail = async (req, res) => {
+  try {
+    const { email } = req.params;
+    const users = await User.find({ email: new RegExp(email, 'i') }); // 'i' for case-insensitive search
+    if (users.length === 0) {
+      return res.status(404).json({ message: "No users found with this email" });
+    }
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 //   User details
 const getUserDetails = async (req, res) => {
   const user = await User.findById(req.user.id).select("-password");
@@ -155,4 +168,5 @@ module.exports = {
   getUserDetails,
   updatePreferences,
   getRecommendedBooks,
+  getUsersByEmail
 };

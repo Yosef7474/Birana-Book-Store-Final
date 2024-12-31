@@ -1,11 +1,13 @@
-import React from "react";
-import { useFetchAllOrdersQuery } from "../../redux/features/orders/orderApi";
+import React, { useContext } from "react";
+import { useGetAllOrdersQuery } from "../../redux/features/orders/orderApi";
+
 
 const GetAllOrders = () => {
-  const { data: orders, isLoading, isError } = useFetchAllOrdersQuery();
-
+  const { data: orders, isLoading, isError } = useGetAllOrdersQuery();
   if (isLoading) return <p>Loading orders...</p>;
-  if (isError) return <p>Error fetching orders.</p>;
+  // if (isError) return <p>Error fetching orders.</p>;
+
+  console.log(orders)
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
@@ -27,8 +29,8 @@ const GetAllOrders = () => {
                 key={order.id}
                 className="border-b border-gray-200 hover:bg-gray-100"
               >
-                <td className="py-3 px-6 text-left">{order.id}</td>
-                <td className="py-3 px-6 text-left">{user.email}</td>
+                <td className="py-3 px-6 text-left">{order._id}</td>
+                <td className="py-3 px-6 text-left">{order.email}</td>
                 <td className="py-3 px-6 text-left">
                   {order.books.map((book, idx) => (
                     <span key={idx}>
@@ -37,8 +39,8 @@ const GetAllOrders = () => {
                     </span>
                   ))}
                 </td>
-                <td className="py-3 px-6 text-left">${order.totalPrice}</td>
-                <td className="py-3 px-6 text-left">{order.status}</td>
+                <td className="py-3 px-6 text-left">${order.totalAmount}</td>
+                <td className="py-3 px-6 text-left">{order.paymentStatus}</td>
               </tr>
             ))}
           </tbody>

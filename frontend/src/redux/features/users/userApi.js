@@ -36,10 +36,15 @@ export const userApi = createApi({
           body: userData,
         }
       )
+    }),
+    getUsersByEmail: builder.query({
+      query: (email) => ({
+        url: `/users/email/${email}`, // This resolves to: http://localhost:5000/api/users/email/:email
+        method: 'GET',
+      })
     })
-
   }),
 });
 
-export const { useRegisterUserMutation, useLoginUserMutation, useGetRecommendedBooksQuery, useUpdatePreferencesMutation } = userApi;
+export const { useRegisterUserMutation, useLoginUserMutation, useGetRecommendedBooksQuery, useUpdatePreferencesMutation, useGetUsersByEmailQuery } = userApi;
 export default userApi;

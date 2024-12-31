@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useFetchBooksByIdQuery } from "../../../redux/features/books/booksApi";
 import Swal from "sweetalert2";
 import axios from "axios";
@@ -10,7 +10,7 @@ const UpdateBook = () => {
   const { id } = useParams();
   const { data: bookData, isLoading, isError, refetch } = useFetchBooksByIdQuery(id);
   const { register, handleSubmit, setValue } = useForm();
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (bookData) {
       setValue("title", bookData.title);
@@ -46,6 +46,7 @@ const UpdateBook = () => {
         icon: "success",
         confirmButtonColor: "#4ADE80",
       }).then(() => {
+        navigate("/dashboard/manage-books")
         window.location.reload();
       });
       ;

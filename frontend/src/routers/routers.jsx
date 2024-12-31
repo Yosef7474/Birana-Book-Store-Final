@@ -19,6 +19,8 @@ import Orderpage from "../pages/order/Orderpage";
 import UpdateBook from "../pages/dashboard/editBook/UpdateBook";
 import Orders from "../pages/dashboard/orders/Orders";
 import PaymentSuccess from "../pages/order/PaymentSuccess";
+import GetAllOrders from "../pages/order/GetAllorders";
+import GetUserorders from "../pages/order/GetUserorders";
 
 const router = createBrowserRouter([
     {
@@ -58,12 +60,12 @@ const router = createBrowserRouter([
           element: <PrivateRoute><Profile/></PrivateRoute>
         },
         {
-          path: "/orders",
-          element: <PrivateRoute><Orders/></PrivateRoute>
-        },
-        {
           path: "/success",
           element: <PrivateRoute><PaymentSuccess/></PrivateRoute>
+        },
+        {
+          path: "/viewOrders",
+          element: <PrivateRoute><GetUserorders/></PrivateRoute>
         }
         
       ]
@@ -92,6 +94,10 @@ const router = createBrowserRouter([
           path: "manage-books",
           element: <AdminRoute><ManageBooks/></AdminRoute>
         },
+        {
+          path: "orders",
+          element: <AdminRoute><GetAllOrders/></AdminRoute>
+        }
 
 
       ]

@@ -4,9 +4,9 @@ import getBaseUrl from "../../../utils/baseURL";
 export const orderApi = createApi({
   reducerPath: "orderApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${getBaseUrl()}/api/orders`, // Replace with your backend URL
+    baseUrl: `${getBaseUrl()}/api/orders`, // Backend base URL
     prepareHeaders: (headers) => {
-      const token =  localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
@@ -22,50 +22,44 @@ export const orderApi = createApi({
         method: "POST",
         body: orderData,
       }),
-      invalidatesTags: ["Orders"],
+      invalidatesTags: ["Orders"], // Invalidate cache for orders on creation
     }),
 
-    // Fetch orders for a user
+    // Fetch orders for a specific user
     getUserOrders: builder.query({
-      query: (userId) => `/orders/user/${userId}`,
-      providesTags: ["Orders"],
+      query: (email) => `/user-orders?email=${email}`, // Adjust endpoint if needed
+      providesTags: ["Orders"], // Cache tag for efficient updates
     }),
 
-    // Fetch all orders (for admin)
+    // Fetch all orders (Admin view)
     getAllOrders: builder.query({
-      query: () => "/orders/admin",
+      query: () => "/orders", // Root endpoint for orders
       providesTags: ["Orders"],
     }),
 
-    // Update order status (for admin)
+    // Update the status of a specific order (Admin view)
     updateOrderStatus: builder.mutation({
       query: ({ orderId, status }) => ({
-        url: `/orders/${orderId}/status`,
+        url: `/${orderId}/status`, // Ensure backend handles this format
         method: "PUT",
         body: { status },
       }),
       invalidatesTags: ["Orders"],
     }),
 
-     // Order-related endpoints
-     fetchAllOrders: builder.query({
-      query: () => '/orders/all-orders',
-      providesTags: ['Orders'],
-    }),
-    fetchUserOrders: builder.query({
-      query: (email) => `/orders/user-orders?email=${email}`,
-      providesTags: (results, error, email) => [{ type: 'Orders', id: email }],
-    }),
+    // Fetch user-specific orders by email
+    // fetchUserOrders: builder.query({
+    //   query: (email) => `/user-orders?email=${email}`, // Adjust endpoint if needed
+    //   providesTags: (result, error, email) => [{ type: "Orders", id: email }], // Scoped tags for user-specific cache
+    // }),
 
-
-    // Payment Callback Endpoint - to update payment status after callback
-    paymentCallback: builder.mutation({
+    // Verify a payment (e.g., for an order)
+    verifyPayment: builder.mutation({
       query: (paymentData) => ({
-        url: "/payment/callback",  // The endpoint where Chapa sends the payment status
+        url: "/payment/callback",
         method: "POST",
-        body: paymentData,  // This should include payment details like tx_ref, status, etc.
+        body: paymentData,
       }),
-      // You might want to invalidate the Orders cache or update them accordingly
       invalidatesTags: ["Orders"],
     }),
   }),
@@ -76,7 +70,5 @@ export const {
   useGetUserOrdersQuery,
   useGetAllOrdersQuery,
   useUpdateOrderStatusMutation,
-  useFetchAllOrdersQuery,
-  useFetchUserOrdersQuery,
-  usePaymentCallbackMutation
+  useVerifyPaymentMutation,
 } = orderApi;
