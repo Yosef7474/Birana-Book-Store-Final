@@ -48,9 +48,9 @@ const bookSchema = new mongoose.Schema({
         required: true,
     },
     coverImage: {
-            type: String,
-            required: true,  
-    },
+      type: String,
+      required: true,  
+},
     quantity: {
       type: Number,
       required: true,
@@ -64,13 +64,6 @@ const bookSchema = new mongoose.Schema({
     },
     comments: [commentSchema],
     
-    // comments: [
-    //     {
-    //       email: { type: String, ref: 'User' },
-    //       comment: { type: String },
-    //       createdAt: { type: Date, default: Date.now },
-    //     },
-    //   ],
     oldPrice:{ 
      type: Number,
      default: 0.00,
