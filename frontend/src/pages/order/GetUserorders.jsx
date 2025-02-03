@@ -36,7 +36,7 @@ const UserOrders = () => {
   const sortedOrders = filteredOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   return (
-    <div className="bg-gradient-to-r from-purple-200 via-pink-200 to-yellow-200 text-gray-800 min-h-screen p-6">
+    <div>
       <h1 className="text-4xl font-bold text-center mb-10">Your Orders</h1>
       
       {/* Timeframe Filter */}

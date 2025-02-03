@@ -1,17 +1,42 @@
 const Book = require('./book.model');
 const User = require("../user/user.model")
+const nodemailer = require('nodemailer');
+const sendEmail = require('./util.email');
+const path = require('path');
+// import multer from 'multer'
+
+
+// const storage = multer.memoryStorage()
+// const upload = multer({ storage: storage })
+
+// upload.single('coverImage')
 
 
 // post book
 const postAbook = async (req, res) => {
     try {
-        const newBook = await Book({...req.body});
+        
+        // Upload image to Cloudinary
+        const { path: imagePath } = req.file;
+        const newBookData = {
+            ...req.body,
+            imageUrl: imagePath, // Add Cloudinary image URL to the book
+        };
+
+        const newBook = new Book(newBookData);
         console.log(newBook);
+
         await newBook.save();
-        res.status(200).send({messege: "Book posted succesfully", book: newBook})
+
+        res.status(200).send({
+            message: "Book posted successfully",
+            book: newBook,
+        });
     } catch (error) {
-        console.error("error creating book", error)
-        res.status(500).send({messege: "failed to create book"})
+        console.error("Error creating book", error);
+        res.status(500).send({
+            message: "Failed to create book",
+        });
     }
 }
 
@@ -27,7 +52,6 @@ const getAllBooks = async (req, res) => {
         res.status(500).send({messege: "failed to fetch book"})
     }
 }
-
 // get single Book
 const getSingleBook = async (req, res) => {
     try {
@@ -81,7 +105,7 @@ const deleteABook = async (req, res) => {
 
 const recommendedBooks = async (req,res) => {
     try {
-        const preferences = req.user.preferences; // Assumes preferences are stored in the user object
+        const preferences = req.user.preferences; 
     
         if (!preferences || preferences.length === 0) {
           return res
@@ -156,6 +180,52 @@ const commentBook = async(req, res) =>{
     }
 }
 
+const deleteComment = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const deleteComment = await Book.findByIdAndDelete(id)
+        if(!deleteComment){
+            res.status(404).send({message: "Book not found"})
+        }
+        res.status(200).send({
+            message: "book deleted succesfully",
+            comment: deleteComment
+        })
+    }catch(error) {
+        console.error("error deleting a comment");
+        res.status(500).send({message: "faild to delete a comment"})
+    }
+}
+
+
+
+const searchBooks = async (req, res) => {
+    try {
+      const { query } = req.query;
+  
+      if (!query) {
+        return res.status(400).json({ message: "Query parameter is required" });
+      }
+  
+      // Debugging: Log the incoming query
+      console.log("Search query:", query);
+  
+      // Perform the search
+      const books = await Book.find({
+        title: { $regex: query, $options: "i" },
+      });
+  
+      // Debugging: Check the results
+      console.log("Books found:", books);
+  
+      res.status(200).json(books);
+    } catch (error) {
+      console.error("Error in searchBooksByTitle:", error.message);
+      res.status(500).json({ message: "Error searching books", error });
+    }
+  }
+
+
 
 module.exports = {
     postAbook, 
@@ -165,5 +235,7 @@ module.exports = {
     deleteABook,
     recommendedBooks,
     rateBook,
-    commentBook
+    commentBook,
+    deleteComment,
+    searchBooks
 }

@@ -1,6 +1,5 @@
 const express = require('express');
-const Order = require('./order.model');
-const { createOrder, getAllOrders, getUserOrders, verifyPayment } = require('./order.controller');
+const { createOrder, getAllOrders, getUserOrders, verifyPayment, deleteOrder, getTotalAmount } = require('./order.controller');
 const { protect } = require('../middleware/verifyUser');
 const verifyAdminToken = require('../middleware/verifyAdminToken');
 const router = express.Router();
@@ -15,6 +14,12 @@ router.get('/user-orders', protect, getUserOrders);
 
 // router.post('/payment/callback',protect, paymentCallback);
 router.post("/payment/callback", verifyPayment);
+
+// delete Order
+router.delete("/:id", verifyAdminToken, deleteOrder)
+
+// totalAmount
+router.get("/", verifyAdminToken, getTotalAmount)
 
 
 

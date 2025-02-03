@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express();
-
+const http = require('http'); // For creating the HTTP server
+const { Server } = require('socket.io'); // Importing Socket.IO
 const cors = require("cors")
 const mongoose = require('mongoose');
 
@@ -9,6 +10,33 @@ const port = process.env.PORT || 5000;
 
 require('dotenv').config()
 
+
+const server = http.createServer(app);
+// Initialize Socket.IO
+const io = new Server(server, {
+  cors: {
+    origin: ['http://localhost:5173'], // Update with your client URL
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+});
+
+// Handle Socket.IO connections
+io.on('connection', (socket) => {
+  console.log('A user connected:', socket.id);
+
+  // Handle order notification events
+  socket.on('new-order', (orderData) => {
+    console.log('New order received:', orderData);
+    // Broadcast the notification to all connected admin clients
+    io.emit('admin-notification', orderData);
+  });
+
+  // Handle disconnections
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+  });
+});
 
 
 // middleware
@@ -24,9 +52,6 @@ const orderRoutes = require('./src/orders/order.route')
 const userRoutes = require('./src/admin/adminn.route')
 const adminRoutes = require('./src/stats/admin.stats')
 const usersRoutes = require('./src/user/user.route')
-
-
-
 
 
 async function main() {

@@ -9,7 +9,7 @@ import getBaseUrl from "../../../utils/baseURL";
 const UpdateBook = () => {
   const { id } = useParams();
   const { data: bookData, isLoading, isError, refetch } = useFetchBooksByIdQuery(id);
-  const { register, handleSubmit, setValue } = useForm();
+  const { register, handleSubmit,formState: { errors }, setValue } = useForm();
   const navigate = useNavigate();
   useEffect(() => {
     if (bookData) {
@@ -126,9 +126,12 @@ const UpdateBook = () => {
               type="number"
               step={0.01}
               placeholder="Old Price"
-              {...register("oldPrice")}
+              {...register("oldPrice", {
+                min: {value: 1, message: "the old price cannot be less than 1"}
+              })}
               className="w-full mt-2 p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
             />
+            {errors.oldPrice && <p className="text-red-500 text-sm mt-1">{errors.oldPrice.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-300">New Price</label>
@@ -136,9 +139,12 @@ const UpdateBook = () => {
               type="number"
               step={0.01}
               placeholder="New Price"
-              {...register("newPrice")}
+              {...register("newPrice", {
+                min: {value: 1, message: "the new price cannot be less than 1"}
+              })}
               className="w-full mt-2 p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
             />
+            {errors.newPrice && <p className="text-red-500 text-sm mt-1">{errors.newPrice.message}</p>}
           </div>
         </div>
 
@@ -151,6 +157,7 @@ const UpdateBook = () => {
             {...register("coverImage")}
             className="w-full mt-2 p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
           />
+          
         </div>
 
         {/* Quantity */}
@@ -159,9 +166,12 @@ const UpdateBook = () => {
           <input
             type="number"
             placeholder="Enter quantity"
-            {...register("quantity")}
+            {...register("quantity",{
+              min: { value: 0, message: "Quantity cannot be less than 0" } 
+            })}
             className="w-full mt-2 p-3 bg-gray-800 text-white border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
           />
+          {errors.quantity && <p className="text-red-500 text-sm mt-1">{errors.quantity.message}</p>}
         </div>
 
         {/* Submit Button */}

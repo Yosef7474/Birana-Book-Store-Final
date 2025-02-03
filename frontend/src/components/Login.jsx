@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import getBaseUrl from "../utils/baseURL";
+import Cookies from "js-cookie"; // Import js-cookie
 
 const Login = () => {
   const [serverError, setServerError] = useState(null); // Server error messages
@@ -25,17 +26,10 @@ const Login = () => {
       const { token } = response.data;
 
       if (token) {
-        localStorage.setItem("token", token);
-
-        // Set token expiration (1 hour)
-        setTimeout(() => {
-          localStorage.removeItem("token");
-          alert("Session Expired. Please log in again.");
-          navigate("/api/users/login");
-        }, 3600 * 1000);
+        // Save token in a cookie with an expiration time (1 hour)
+        Cookies.set("token", token, { expires: 1 / 24 }); // 1/24 = 1 hour
 
         alert("Login successful!");
-        
         navigate("/"); // Redirect to homepage
         window.location.reload();
       } else {

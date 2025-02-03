@@ -1,6 +1,7 @@
 const Order = require("./order.model");
 const Book = require("../books/book.model");
 const User = require('../user/user.model');
+const Notification = require('./notification.model')
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 
@@ -27,6 +28,18 @@ const verifyPayment = async (req, res) => {
         ...data.data.meta,
         paymentStatus: "Paid",
       });
+
+       // Create a notification
+    const notification = new Notification({
+      message: `A new order was placed by ${email}`,
+      type: 'order',
+      orderId: savedOrder._id,
+    });
+
+    await notification.save();
+
+    // Emit the notification to the admin via Socket.IO
+    io.emit('new-order', { message: notification.message, orderId: savedOrder._id });
 
       return res.status(200).json({ success: true, order });
     }
@@ -86,6 +99,17 @@ const createOrder = async (req, res) => {
   }
 };
 
+const getTotalAmount = async (req, res) => {
+  try {
+    const orders = await Order.find(); // Fetch all orders
+    const totalPrice = orders.reduce((sum, order) => sum + order.totalAmount, 0); // Calculate total amount
+    res.status(200).json({ totalPrice });
+  } catch (error) {
+    console.error("Error calculating total amount:", error);
+    res.status(500).json({ message: "Failed to calculate total amount", error: error.message });
+  }
+};
+
 
 // Admin: Get all orders
 const getAllOrders = async (req, res) => {
@@ -112,13 +136,32 @@ const getUserOrders = async (req, res) => {
   }
 };
 
+// delete Book
+const deleteOrder = async (req, res) => {
+  try {
+      const {id} = req.params;
+      const deleteOrder = await Order.findByIdAndDelete(id)
+      if(!deleteOrder){
+          res.status(404).send({message: "Book not found"})
+      }
+      res.status(200).send({
+          message: "book deleted succesfully",
+          order: deleteOrder
+      })
+  }catch(error) {
+      console.error("error deleting Order");
+      res.status(500).send({message: "faild to delete a Order"})
+  }
+}
+
 
 module.exports = {
   createOrder,
   getUserOrders,
   getAllOrders,
   verifyPayment,
- 
+  deleteOrder,
+  getTotalAmount
 };
 
 // 14132268

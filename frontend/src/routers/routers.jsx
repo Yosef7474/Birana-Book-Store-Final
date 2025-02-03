@@ -21,6 +21,7 @@ import Orders from "../pages/dashboard/orders/Orders";
 import PaymentSuccess from "../pages/order/PaymentSuccess";
 import GetAllOrders from "../pages/order/GetAllorders";
 import GetUserorders from "../pages/order/GetUserorders";
+import SearchResults from "../components/searchResults";
 
 const router = createBrowserRouter([
     {
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
         {
           path: "/viewOrders",
           element: <PrivateRoute><GetUserorders/></PrivateRoute>
+        },
+        {
+          path: "/search",
+          element: <SearchResults/>
         }
         
       ]

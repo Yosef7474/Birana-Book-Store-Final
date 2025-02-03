@@ -1,11 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { orderApi, useCreateOrderMutation } from "../../redux/features/orders/orderApi";
 import { AuthContext } from "../../context/AuthContext";
-
-
+import { io } from "socket.io-client";
 
 const Orderpage = (order) => {
+  const socket = io("http://localhost:5000"); // Connect to your backend
   const { user } = useContext(AuthContext);
   const cartItems = useSelector((state) => state.cart.cartItems);
   const [createOrder, { isLoading, isSuccess, error }] = useCreateOrderMutation();
@@ -48,13 +48,18 @@ const Orderpage = (order) => {
       console.log("Order Data:", orderData);
       const createdOrder = await createOrder(orderData).unwrap();
 
+      // Emit event to notify admin
+      socket.emit("new-order", {
+        message: "A new order has been placed!",
+        order: createdOrder,
+      });
+
       // Trigger payment process
       redirectToChapaPayment(createdOrder._id);
     } catch (err) {
       console.error("Failed to place order:", err);
     }
   };
-
 
   const redirectToChapaPayment = (orderId) => {
     const chapaForm = document.createElement("form");
@@ -75,7 +80,6 @@ const Orderpage = (order) => {
       <input type="hidden" name="callback_url" value="http://api/orders/payment/callback" />
       <input type="hidden" name="return_url" value="http://localhost:5173/success" />
       <input type="hidden" name="meta[orderId]" value="${orderId}" />
-      
     `;
 
     document.body.appendChild(chapaForm);

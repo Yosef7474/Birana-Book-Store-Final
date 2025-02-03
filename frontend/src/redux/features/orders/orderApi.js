@@ -46,14 +46,13 @@ export const orderApi = createApi({
       }),
       invalidatesTags: ["Orders"],
     }),
-
-    // Fetch user-specific orders by email
-    // fetchUserOrders: builder.query({
-    //   query: (email) => `/user-orders?email=${email}`, // Adjust endpoint if needed
-    //   providesTags: (result, error, email) => [{ type: "Orders", id: email }], // Scoped tags for user-specific cache
-    // }),
-
-    // Verify a payment (e.g., for an order)
+    deleteOrder: builder.mutation({
+      query: (id) => ({
+          url: `/${id}`,
+          method: "DELETE"
+      }),
+      invalidatesTags: ["Book"]
+  }),
     verifyPayment: builder.mutation({
       query: (paymentData) => ({
         url: "/payment/callback",
@@ -62,6 +61,12 @@ export const orderApi = createApi({
       }),
       invalidatesTags: ["Orders"],
     }),
+    // Fetch total amount of all orders
+    getTotalOrderAmount: builder.query({
+      query: () => "/total-amount", // Endpoint for total amount
+      providesTags: ["Orders"], // Cache tag
+    }),
+
   }),
 });
 
@@ -71,4 +76,6 @@ export const {
   useGetAllOrdersQuery,
   useUpdateOrderStatusMutation,
   useVerifyPaymentMutation,
+  useDeleteOrderMutation,
+  useGetTotalOrderAmountQuery,
 } = orderApi;

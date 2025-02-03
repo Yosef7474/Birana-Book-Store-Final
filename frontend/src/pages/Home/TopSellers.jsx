@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import BookCard from "../books/BookCard";
-
 import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 // Import Swiper styles
@@ -8,7 +7,6 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { useFetchAllBooksQuery } from "../../redux/features/books/booksApi";
-
 const categories = [
   "chose a genre",
   "Business",
@@ -16,8 +14,7 @@ const categories = [
   "Horror",
   "Adventure",
 ];
-
-const TopSellers = () => {
+const Books = () => {
   const [selectedCategory, setselectedCategory] = useState("Choose Genre");
 
   const { data: books = [] } = useFetchAllBooksQuery();
@@ -82,5 +79,4 @@ const TopSellers = () => {
     </div>
   );
 };
-
-export default TopSellers;
+export default Books;

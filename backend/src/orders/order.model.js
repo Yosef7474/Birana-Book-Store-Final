@@ -41,10 +41,6 @@ const orderSchema = new mongoose.Schema({
     paymentStatus: { type: String, enum: ['Failed', 'Paid'] },
   
     books: [bookOrderSchema],
-    totalPrice: {
-        type: Number,
-        // required: true
-    },
     createdAt: { type: Date, default: Date.now },
 },
 {

@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
+import Cookies from "js-cookie"; // Import js-cookie
 
 export const AuthContext = createContext(); // Named export
 
@@ -6,9 +7,11 @@ export const AuthProvider = ({ children }) => { // Named export
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    // Fetch token from cookies
+    const token = Cookies.get("token");
     if (token) {
       try {
+        // Decode the token payload
         const payloadBase64 = token.split(".")[1];
         const decodedPayload = atob(payloadBase64);
         const payloadObject = JSON.parse(decodedPayload);
@@ -20,7 +23,10 @@ export const AuthProvider = ({ children }) => { // Named export
   }, []);
 
   const login = (token) => {
-    localStorage.setItem("token", token);
+    // Save token in cookies with an expiration time (e.g., 1 hour)
+    Cookies.set("token", token, { expires: 1 / 24 }); // 1/24 = 1 hour
+
+    // Decode the token payload and set the user
     const payloadBase64 = token.split(".")[1];
     const decodedPayload = atob(payloadBase64);
     const payloadObject = JSON.parse(decodedPayload);
@@ -28,35 +34,13 @@ export const AuthProvider = ({ children }) => { // Named export
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    // Remove token from cookies
+    Cookies.remove("token");
     setUser(null);
   };
 
-  const updateProfile = async (newProfileData) => {
-    // Hash the password if provided
-    let hashedPassword = newProfileData.password;
-    if (hashedPassword) {
-      hashedPassword = await bcrypt.hash(hashedPassword, 10); // Hash the password with a salt
-    }
-
-    setUser((prevUser) => {
-      const updatedUser = { 
-        ...prevUser, 
-        ...newProfileData, 
-        password: hashedPassword || prevUser.password // Update the password with the hashed value if it exists
-      };
-
-      // Optionally, update the token in localStorage with the new profile data
-      const updatedPayloadBase64 = btoa(JSON.stringify(updatedUser));
-      const updatedToken = `${updatedPayloadBase64}.${localStorage.getItem("token").split(".")[2]}`;
-      localStorage.setItem("token", updatedToken);
-
-      return updatedUser;
-    });
-  };
-
   return (
-    <AuthContext.Provider value={{ user, login, logout, updateProfile }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

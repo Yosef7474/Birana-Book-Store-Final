@@ -1,9 +1,13 @@
 const express = require('express')
+const multer = require('multer');
 const Book = require('./book.model');
-const { postAbook, getAllBooks, getSingleBook, UpdateBook, deleteABook, recommendedBooks, rateBook, commentBook } = require('./book.controller');
+const { postAbook, getAllBooks, getSingleBook, UpdateBook, deleteABook, recommendedBooks, rateBook, commentBook, deleteComment, searchBooks } = require('./book.controller');
 const verifyAdminToken = require('../middleware/verifyAdminToken');
 const {protect} = require('../middleware/verifyUser')
 const router = express.Router();
+const upload = require('./upload'); // Adjust the path as needed
+// Multer configuration for file upload
+
 
 
 
@@ -38,6 +42,11 @@ router.post("/rate/:id", protect, rateBook)
 
 // comment
 router.post("/comment/:id", protect, commentBook)
+// delete comment
+router.delete("/:id", protect, deleteComment)
+
+// searchBooks
+router.get("/search", searchBooks)
 
 
 module.exports = router;
