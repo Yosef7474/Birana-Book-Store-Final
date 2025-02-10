@@ -5,7 +5,7 @@ const verifyAdminToken = require('../middleware/verifyAdminToken');
 const router = express.Router();
 
 
-
+// create Order
 router.post("/orderPage",protect, createOrder)
 // Admin: Get all orders
 router.get('/orders', verifyAdminToken, getAllOrders);

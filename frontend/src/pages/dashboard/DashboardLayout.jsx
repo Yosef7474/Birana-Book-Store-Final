@@ -11,9 +11,14 @@ const DashboardLayout = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    deleteCookie('token'); // Remove the token from cookies
     navigate("/admin");
-  };
+    window.location.reload();
+};
+
+function deleteCookie(name, path, domain) {
+  document.cookie = name + '=; Max-Age=0; Path=' + (path ? path : '/') + '; ' + (domain ? 'Domain=' + domain + ';' : '') + ' Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
 
 
   useEffect(() => {

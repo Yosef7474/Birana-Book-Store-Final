@@ -6,37 +6,19 @@ const path = require('path');
 // import multer from 'multer'
 
 
-// const storage = multer.memoryStorage()
-// const upload = multer({ storage: storage })
 
-// upload.single('coverImage')
 
 
 // post book
 const postAbook = async (req, res) => {
     try {
-        
-        // Upload image to Cloudinary
-        const { path: imagePath } = req.file;
-        const newBookData = {
-            ...req.body,
-            imageUrl: imagePath, // Add Cloudinary image URL to the book
-        };
-
-        const newBook = new Book(newBookData);
+        const newBook = await Book({...req.body});
         console.log(newBook);
-
         await newBook.save();
-
-        res.status(200).send({
-            message: "Book posted successfully",
-            book: newBook,
-        });
+        res.status(200).send({messege: "Book posted succesfully", book: newBook})
     } catch (error) {
-        console.error("Error creating book", error);
-        res.status(500).send({
-            message: "Failed to create book",
-        });
+        console.error("error creating book", error)
+        res.status(500).send({messege: "failed to create book"})
     }
 }
 
