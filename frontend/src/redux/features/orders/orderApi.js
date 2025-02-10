@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import Cookies from "js-cookie"; // Import js-cookie to interact with cookies
 import getBaseUrl from "../../../utils/baseURL";
 
 export const orderApi = createApi({
@@ -6,7 +7,7 @@ export const orderApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${getBaseUrl()}/api/orders`, // Backend base URL
     prepareHeaders: (headers) => {
-      const token = localStorage.getItem("token");
+      const token = Cookies.get("token"); // Fetch token from cookie storage
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
@@ -48,11 +49,11 @@ export const orderApi = createApi({
     }),
     deleteOrder: builder.mutation({
       query: (id) => ({
-          url: `/${id}`,
-          method: "DELETE"
+        url: `/${id}`,
+        method: "DELETE",
       }),
-      invalidatesTags: ["Book"]
-  }),
+      invalidatesTags: ["Book"],
+    }),
     verifyPayment: builder.mutation({
       query: (paymentData) => ({
         url: "/payment/callback",
@@ -66,7 +67,6 @@ export const orderApi = createApi({
       query: () => "/total-amount", // Endpoint for total amount
       providesTags: ["Orders"], // Cache tag
     }),
-
   }),
 });
 

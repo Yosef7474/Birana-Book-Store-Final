@@ -4,6 +4,7 @@ const http = require('http'); // For creating the HTTP server
 const { Server } = require('socket.io'); // Importing Socket.IO
 const cors = require("cors")
 const mongoose = require('mongoose');
+const cookieParser = require("cookie-parser");
 
 
 const port = process.env.PORT || 5000;
@@ -45,6 +46,7 @@ app.use(cors({
   origin: ['http://localhost:5173'],
   credentials: true
 }))
+app.use(cookieParser());
 
 // routes
 const bookRoutes = require('./src/books/book.route');

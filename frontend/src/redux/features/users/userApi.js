@@ -5,6 +5,14 @@ export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: fetchBaseQuery({
     baseUrl: `${getBaseUrl()}/api`, // Base path for your API
+    prepareHeaders: (headers) => {
+          const token = Cookies.get("token"); // Fetch token from cookie storage
+          if (token) {
+            headers.set("Authorization", `Bearer ${token}`);
+          }
+          return headers;
+        },
+    credentials: 'include', // Include cookies in all requests
   }),
   endpoints: (builder) => ({
     registerUser: builder.mutation({
@@ -12,6 +20,7 @@ export const userApi = createApi({
         url: '/register', // This resolves to: http://localhost:5000/api/users/register
         method: 'POST',
         body: userData,
+        headers: { "Content-Type": "application/json" },
       }),
     }),
     loginUser: builder.mutation({
@@ -19,12 +28,14 @@ export const userApi = createApi({
         url: '/login', // This resolves to: http://localhost:5000/api/users/login
         method: 'POST',
         body: userData,
+        headers: { "Content-Type": "application/json" },
       }),
     }),
     getUsersByEmail: builder.query({
       query: (email) => ({
         url: `/users/email/${email}`, // This resolves to: http://localhost:5000/api/users/email/:email
         method: 'GET',
+        headers: { "Content-Type": "application/json" },
       }),
     }),
     updateProfile: builder.mutation({
@@ -32,6 +43,7 @@ export const userApi = createApi({
         url: '/update', // This resolves to: http://localhost:5000/api/users/update
         method: 'PUT',
         body: userData,
+        headers: { "Content-Type": "application/json" },
       }),
     }),
   }),

@@ -60,32 +60,37 @@ const loginUser = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const token = jwt.sign({email: user.email, role: user.role, name: user.name, preferences: user.preferences}, JWT_SECRET, {expiresIn:"1h"})
-      
-      res.status(201).json({ 
+      const token = jwt.sign(
+        { email: user.email, role: user.role, name: user.name, preferences: user.preferences },
+        JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+
+      // Set the token as an HTTP-only cookie
+      res.cookie("token", token, {
+        maxAge: 60 * 60 * 1000, // 1 hour expiration (same as token expiry)
+      });
+
+      // Respond with user details (excluding token from response body)
+      res.status(200).json({
         _id: user.id,
         name: user.name,
         email: user.email,
         role: user.role,
         preferences: user.preferences,
-
-      token: token,
-        User: {
-          _id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          preferences: user.preferences
-        }
-
+        message: "Login successful",
       });
     } else {
       res.status(401).json({ message: "Invalid email or password" });
     }
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+// get users
 
 const getUsersByEmail = async (req, res) => {
   try {

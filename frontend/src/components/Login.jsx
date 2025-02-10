@@ -3,10 +3,9 @@ import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import getBaseUrl from "../utils/baseURL";
-import Cookies from "js-cookie"; // Import js-cookie
 
 const Login = () => {
-  const [serverError, setServerError] = useState(null); // Server error messages
+  const [serverError, setServerError] = useState(null);
   const navigate = useNavigate();
 
   // React Hook Form setup
@@ -19,24 +18,19 @@ const Login = () => {
   // Handle form submission
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post(`${getBaseUrl()}/api/users/login`, data, {
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await axios.post(
+        `${getBaseUrl()}/api/users/login`,
+        data,
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true, 
+        }
+      );
 
-      const { token } = response.data;
-
-      if (token) {
-        // Save token in a cookie with an expiration time (1 hour)
-        Cookies.set("token", token, { expires: 1 / 24 }); // 1/24 = 1 hour
-
-        alert("Login successful!");
-        navigate("/"); // Redirect to homepage
-        window.location.reload();
-      } else {
-        setServerError("Login failed. Please check your credentials.");
-      }
+      alert("Login successful!");
+      navigate("/"); 
+      window.location.reload();
     } catch (error) {
-      // Display error message from server or generic fallback
       setServerError(error.response?.data?.message || "Login failed. Try again.");
     }
   };

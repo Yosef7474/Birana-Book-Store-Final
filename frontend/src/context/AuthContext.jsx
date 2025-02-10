@@ -1,42 +1,43 @@
 import React, { createContext, useState, useEffect } from "react";
-import Cookies from "js-cookie"; // Import js-cookie
+import Cookies from "js-cookie";
 
-export const AuthContext = createContext(); // Named export
+export const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => { // Named export
+export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Fetch token from cookies
-    const token = Cookies.get("token");
+    const token = Cookies.get("token"); // Get token from cookie
     if (token) {
       try {
-        // Decode the token payload
+        // Decode the JWT token
         const payloadBase64 = token.split(".")[1];
-        const decodedPayload = atob(payloadBase64);
-        const payloadObject = JSON.parse(decodedPayload);
-        setUser(payloadObject);
+        const decodedPayload = JSON.parse(atob(payloadBase64)); // Decode base64 payload
+        setUser(decodedPayload); // Set user information from decoded token
       } catch (err) {
-        console.error("Error decoding token", err);
+        console.error("Error decoding token:", err);
+        Cookies.remove("token"); // Remove invalid token from cookie
+        setUser(null);
       }
     }
-  }, []);
+  }, []); // Run only on initial load
 
   const login = (token) => {
-    // Save token in cookies with an expiration time (e.g., 1 hour)
-    Cookies.set("token", token, { expires: 1 / 24 }); // 1/24 = 1 hour
+    Cookies.set("token", token, { expires: 1 / 24 }); // Store token in cookie with expiration time
 
-    // Decode the token payload and set the user
-    const payloadBase64 = token.split(".")[1];
-    const decodedPayload = atob(payloadBase64);
-    const payloadObject = JSON.parse(decodedPayload);
-    setUser(payloadObject);
+    try {
+      const payloadBase64 = token.split(".")[1];
+      const decodedPayload = JSON.parse(atob(payloadBase64)); // Decode base64 payload
+      setUser(decodedPayload); // Set user information from decoded token
+    } catch (err) {
+      console.error("Error decoding token:", err);
+      setUser(null);
+    }
   };
 
   const logout = () => {
-    // Remove token from cookies
-    Cookies.remove("token");
-    setUser(null);
+    Cookies.remove("token"); // Remove token from cookie
+    setUser(null); // Reset user state
   };
 
   return (

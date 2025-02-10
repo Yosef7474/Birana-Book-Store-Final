@@ -43,18 +43,21 @@ const Recommended = () => {
 
   useEffect(() => {
     const token = getCookie("token");
-
-    if (token) {
-      const decodedToken = decodeJWT(token);
-      if (decodedToken && Array.isArray(decodedToken.preferences)) {
-        setUserPreference(decodedToken.preferences);
-      } else {
-        console.error("User preferences not found or invalid in token");
-      }
+  
+    if (!token) {
+      console.warn("Token not found in cookies.");
+      return;
+    }
+  
+    const decodedToken = decodeJWT(token);
+  
+    if (decodedToken && Array.isArray(decodedToken.preferences)) {
+      setUserPreference(decodedToken.preferences);
     } else {
-      console.error("Token not found in cookies");
+      console.error("User preferences not found or invalid in token");
     }
   }, []);
+  
 
   useEffect(() => {
     if (userPreference.length > 0) {

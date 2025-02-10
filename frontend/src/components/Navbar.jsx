@@ -1,18 +1,17 @@
 import React, { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
-import { FaSearch } from "react-icons/fa";
-import { FaCartPlus } from "react-icons/fa";
+import { AuthContext } from "../context/AuthContext"; // Adjust path if necessary
 import avatarImg from "../assets/avatar.png";
 import logoImg from "../assets/logo.jpg";
 import { useSelector } from "react-redux";
+import { FaSearch } from "react-icons/fa";
+import { FaCartPlus } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext); // Get user from context
   const cartItems = useSelector((state) => state.cart.cartItems);
   const [searchQuery, setSearchQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const navigate = useNavigate(); // Initialize useNavigate
 
   const navigation = [
     { name: "Profile", href: "/Profile" },
@@ -32,9 +31,8 @@ const Navbar = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    navigate(`/search?query=${searchQuery}`); // Redirect to search results page
+    navigate(`/search?query=${searchQuery}`);
   };
-
 
   return (
     <header className="mx-auto px-4 py-6 bg-gray-700">
