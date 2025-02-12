@@ -1,27 +1,25 @@
-Birana Bookstore
+<strong>Birana Bookstore </strong>
 
-📖 Overview
+📖 <strong>Overview </strong>
 
-MERN Bookstore is a modern e-commerce platform for buying books, built with the MERN stack (MongoDB, Express.js, React, and Node.js). It features user authentication, book recommendations, search functionality, order tracking, and admin statistics.
+   - MERN Bookstore is a modern e-commerce platform for buying books, built with the MERN stack (MongoDB, Express.js, React, and Node.js). It features user authentication, book recommendations, search functionality, order tracking, and admin statistics.
 
-✨ Features
+✨ <strong>Features </strong>
 
-Book Management & Ratings
+   - Book Management & Ratings
 
-Book Recommendations
+   - Book Recommendations
 
-Search & Order Management
+   - Search & Order Management
 
-Admin Dashboard & Statistics
+   - Admin Dashboard & Statistics
 
-🛠️ Technologies Used
+🛠️ <strong>Technologies Used </strong>
 
-Frontend: React, Redux, Tailwind CSS
+   - Frontend: React, Redux, Tailwind CSS
 
-Backend: Node.js, Express.js, MongoDB
+   - Backend: Node.js, Express.js, MongoDB
 
+<strong>Payment integration </strong>
 
-
-Payment integration
-
-Chapa payment method
+   - Chapa payment method
