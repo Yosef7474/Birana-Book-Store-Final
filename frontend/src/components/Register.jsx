@@ -41,6 +41,36 @@ const Register = () => {
     );
   };
 
+  const onSubmit = async (data) => {
+    try {
+      // Register the user by passing the registration data (name, email, password, preferences)
+      // const response = await axios.post(data.name, data.email, data.password, data.preferences);
+      
+      const response = await axios.post(
+        `${getBaseUrl()}/api/users/register`,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const auth = response.data;
+      console.log(response);
+      if (response.status === 201) {
+        alert("Registration successful!");
+        navigate("/api/users/login"); // Redirect to home page after successful registration
+      } else if (response.status === 400) {
+        setEmailError(true);
+      } else {
+        console.log("something went wrong...");
+        
+      }
+    } catch (error) {
+      // setMessage("An error occurred during registration. Please try again.");
+      console.error(error.message);
+    }
+  };
 
   return (
     <div className="h-[calc(100vh-120px)] flex items-center justify-center">

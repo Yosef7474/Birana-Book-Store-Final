@@ -74,7 +74,7 @@ const Footer = () => {
         <p className='text-gray-300 text-sm'>© Birana Book Store. All rights reserved.
         </p>
       </div>
-    // </footer>
+       </footer>
   //  <footer className="bg-[#47628f] text-white py-10 px-4">
   //     {/* Top Section */}
   //     <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-8">

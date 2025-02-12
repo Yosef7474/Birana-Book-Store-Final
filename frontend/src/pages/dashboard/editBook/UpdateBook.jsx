@@ -5,6 +5,7 @@ import { useFetchBooksByIdQuery } from "../../../redux/features/books/booksApi";
 import Swal from "sweetalert2";
 import axios from "axios";
 import getBaseUrl from "../../../utils/baseURL";
+import Cookies from "js-cookie";
 
 const UpdateBook = () => {
   const { id } = useParams();
@@ -37,7 +38,7 @@ const UpdateBook = () => {
       await axios.put(`${getBaseUrl()}/api/books/edit/${id}`, updateBookData, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${Cookies.get("token")}`,
         },
       });
       Swal.fire({

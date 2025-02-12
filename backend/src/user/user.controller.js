@@ -9,16 +9,15 @@ const app = express();
 
 // Register User
 const registerUser = async (req, res) => {
-  const { name, email, password, preferences } = req.body;
+  // console.log(req.body);
+  const { name, email, password, preferences } = req.body; // Include preferences
 
   try {
-    // Validate input fields
     if (!name || !email || !password) {
       return res.status(400).json({ message: "Please fill in all fields" });
     }
-
-    // Check if user already exists
     const userExists = await User.findOne({ email });
+
     if (userExists) {
       return res.status(400).json({ message: "User already exists" });
     }
@@ -33,39 +32,22 @@ const registerUser = async (req, res) => {
       password: hashedPassword,
       preferences, // Save preferences in the database
     });
+    console.log(user);
 
-    if (!user) {
-      return res.status(400).json({ message: "Invalid user data" });
-    }
-
-    // Generate JWT token
-    const token = jwt.sign(
-      {
-        id: user._id,
-        email: user.email,
+    if (user) {
+      res.status(201).json({
+        _id: user.id,
         name: user.name,
+        email: user.email,
         preferences: user.preferences,
-      },
-      process.env.JWT_SECRET, // Use your JWT secret key
-      { expiresIn: "1h" } // Token expires in 1 hour
-    );
-
-    // Set token in cookies
-    res.cookie("token", token, {
-      sameSite: "strict", // Prevents CSRF attacks
-    });
-
-    // Return user data and token in the response
-    res.status(201).json({
-      _id: user.id,
-      name: user.name,
-      email: user.email,
-      preferences: user.preferences,
-      token, // Optionally return the token in the response
-    });
+        // token: generateToken(user.id),
+       
+      });
+    } else {
+      res.status(400).json({ message: "Invalid user data" });
+    }
   } catch (err) {
-    console.error("Registration error:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error whats wrong" });
   }
 };
 
