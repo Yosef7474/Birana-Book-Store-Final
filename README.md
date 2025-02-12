@@ -2,7 +2,7 @@
 
 📖 <strong>Overview </strong>
 
-   - MERN Bookstore is a modern e-commerce platform for buying books, built with the MERN stack (MongoDB, Express.js, React, and Node.js). It features user authentication, book recommendations, search functionality, order tracking, and admin statistics.
+   - Birana Bookstore is a modern e-commerce platform for buying books, built with the MERN stack (MongoDB, Express.js, React, and Node.js). It features user authentication, book recommendations, search functionality, order tracking, admin statistics etc
 
 ✨ <strong>Features </strong>
 
