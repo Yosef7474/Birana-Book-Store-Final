@@ -16,7 +16,7 @@ const server = http.createServer(app);
 // Initialize Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: ['http://localhost:5173'], // Update with your client URL
+    origin: ['http://localhost:5173', 'https://birana-book-store-final-buz5.vercel.app'], // Update with your client URL
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -43,7 +43,7 @@ io.on('connection', (socket) => {
 // middleware
 app.use(express.json());
 app.use(cors({
-  origin: ['http://localhost:5173'],
+  origin: ['http://localhost:5173', 'https://birana-book-store-final-buz5.vercel.app'],
   credentials: true
 }))
 app.use(cookieParser());
