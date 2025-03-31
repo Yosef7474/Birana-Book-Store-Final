@@ -12,9 +12,6 @@ router.post("/admin", async (req, res) => {
         if (!admin) {
             return res.status(404).json({ message: "Admin not found" });
         }
-        if (admin.password !== password) {
-            return res.status(401).json({ message: "Invalid password" });
-        }
 
         // Generate JWT token
         const token = jwt.sign(
@@ -31,6 +28,7 @@ router.post("/admin", async (req, res) => {
 
         return res.status(200).json({
             message: "Authentication Successful",
+            token: token,
             admin: { username: admin.username, role: admin.role },
         });
 

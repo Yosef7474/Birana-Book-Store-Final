@@ -79,6 +79,7 @@ const loginUser = async (req, res) => {
         email: user.email,
         role: user.role,
         preferences: user.preferences,
+        token: token,
         message: "Login successful",
       });
     } else {
