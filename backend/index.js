@@ -43,7 +43,7 @@ io.on('connection', (socket) => {
 // middleware
 app.use(express.json());
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://birana-book-store-final-buz5.vercel.app'],
+  origin: ['http://localhost:5173', 'https://birana-book-store-final-buz5.vercel.app', 'https://birana-book-store-final-buz5-git-main-yosefs-projects-c385ad18.vercel.app'],
   credentials: true
 }))
 app.use(cookieParser());
