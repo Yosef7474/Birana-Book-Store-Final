@@ -3,10 +3,12 @@ import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import getBaseUrl from "../utils/baseURL";
+import Cookies from "js-cookie"; 
 
 const Login = () => {
   const [serverError, setServerError] = useState(null);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   // React Hook Form setup
   const {
@@ -27,11 +29,20 @@ const Login = () => {
         }
       );
 
+
+       // Store token in cookies
+    Cookies.set("token", response.data.token, {
+      expires: 7, 
+    
+    });
+
       alert("Login successful!");
       navigate("/"); 
       window.location.reload();
     } catch (error) {
       setServerError(error.response?.data?.message || "Login failed. Try again.");
+    }finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -115,9 +126,10 @@ const Login = () => {
           <div>
             <button
               type="submit"
+              disabled={loading}
               className="w-full bg-primary hover:bg-blue-700 text-white font-bold py-2 rounded-lg focus:outline-none focus:shadow"
             >
-              Login
+              {loading ? "Logging in..." : "Login"}
             </button>
           </div>
         </form>

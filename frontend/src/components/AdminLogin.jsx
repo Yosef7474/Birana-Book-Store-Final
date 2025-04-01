@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import getBaseUrl from '../utils/baseURL';
-
+import Cookies from "js-cookie";
 const AdminLogin = () => {
     const [message, setMessage] = useState("");
 
@@ -17,13 +17,22 @@ const AdminLogin = () => {
 
     const onSubmit = async (data) => {
         try {
-            const response = await axios.post(`${getBaseUrl()}/api/auth/admin`, data, {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                withCredentials: true // ✅ Ensures cookies are included in the request
-            });
-
+            const response = await axios.post(
+                `${getBaseUrl()}/api/auth/admin`, 
+                data, 
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    withCredentials: true, // Should be outside headers
+                }
+            );
+    
+            Cookies.set("token", response.data.token, {
+                  expires: 7, 
+                
+                });
+    
             alert("Login Successful");
             navigate("/dashboard");
             

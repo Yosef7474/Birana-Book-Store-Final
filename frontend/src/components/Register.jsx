@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Router, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import Cookies from "js-cookie"; 
 
 import { useRegisterUserMutation } from "../redux/features/users/userApi";
 import axios from "axios";
@@ -25,6 +26,7 @@ const Register = () => {
   const [registerUser, { isLoading }] = useRegisterUserMutation();
   const [errorMessage, setErrorMessage] = useState(null);
   const [emailError, setEmailError] = useState(false);
+  
 
   const {
     register,
@@ -41,11 +43,8 @@ const Register = () => {
     );
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data) => {  
     try {
-      // Register the user by passing the registration data (name, email, password, preferences)
-      // const response = await axios.post(data.name, data.email, data.password, data.preferences);
-      
       const response = await axios.post(
         `${getBaseUrl()}/api/users/register`,
         data,
@@ -55,20 +54,24 @@ const Register = () => {
           },
         }
       );
-      const auth = response.data;
-      console.log(response);
+  
       if (response.status === 201) {
+        // Store token in cookies after successful registration
+        Cookies.set("token", response.data.token, {
+          expires: 7, // Expires in 7 days
+        });
+  
         alert("Registration successful!");
-        navigate("/api/users/login"); // Redirect to home page after successful registration
-      } else if (response.status === 400) {
-        setEmailError(true);
-      } else {
-        console.log("something went wrong...");
-        
+        navigate("/"); // Redirect to homepage
+        window.location.reload();
       }
     } catch (error) {
-      // setMessage("An error occurred during registration. Please try again.");
-      console.error(error.message);
+      console.error(error.response?.data?.message || "An error occurred.");
+  
+      // If error is due to user already existing, show email error
+      if (error.response?.status === 400) {
+        setEmailError(true);
+      }
     }
   };
 
